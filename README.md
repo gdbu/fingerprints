@@ -1,4 +1,4 @@
-# Fingerprints [![GoDoc](https://pkg.go.dev/github.com/gdbu/fingerprints?status.svg)](https://pkg.go.dev/github.com/gdbu/fingerprints) ![Status](https://img.shields.io/badge/status-beta-yellow.svg)
+# Fingerprints [![GoDoc](https://godoc.org/github.com/gdbu/fingerprints?status.svg)](https://pkg.go.dev/github.com/gdbu/fingerprints) ![Status](https://img.shields.io/badge/status-beta-yellow.svg)
 Fingerprints is a user detection library intended to aid in finding spam accounts
 
 ## Usage
