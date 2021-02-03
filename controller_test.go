@@ -2,6 +2,8 @@ package fingerprints
 
 import (
 	"context"
+	"fmt"
+	"log"
 	"os"
 	"testing"
 
@@ -10,7 +12,8 @@ import (
 )
 
 var (
-	testCtx = context.Background()
+	testCtx        = context.Background()
+	testController *Controller
 )
 
 func TestController_GetDuplicates(t *testing.T) {
@@ -88,6 +91,64 @@ func TestController_GetDuplicates(t *testing.T) {
 		default:
 		}
 	}
+}
+
+func ExampleNew() {
+	var err error
+	if testController, err = New("./data"); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func ExampleController_New() {
+	var (
+		i   Identifiers
+		err error
+	)
+
+	i.IPAddress = "64.233.191.255"
+	i.UserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36"
+	i.AcceptLanguage = "en-US,en;q=0.9,de-DE;q=0.8,de;q=0.7"
+
+	if err = testController.New(context.Background(), "user_0", i); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func ExampleController_GetByIP() {
+	var (
+		es  []*Entry
+		err error
+	)
+	if es, err = testController.GetByIP("[IP Address]"); err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Matching entries", es)
+}
+
+func ExampleController_GetByUserAgent() {
+	var (
+		es  []*Entry
+		err error
+	)
+	if es, err = testController.GetByUserAgent("[IP Address]"); err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Matching entries", es)
+}
+
+func ExampleController_GetDuplicates() {
+	var (
+		dups map[string]stringset.Map
+		err  error
+	)
+	if dups, err = testController.GetDuplicates(); err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Duplicates", dups)
 }
 
 func testInit() (c *Controller, err error) {
