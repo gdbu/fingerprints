@@ -4,11 +4,15 @@ import "net/http"
 
 func makeIdentifiers(req *http.Request) (i Identifiers) {
 	h := req.Header
+	// Attempt to get IP address from X-Forwarded-For header value first
 	if i.IPAddress = h.Get("X-Forwarded-For"); i.IPAddress == "" {
+		// X-Forwarded-For does not exists, get IP from remote address
 		i.IPAddress = req.RemoteAddr
 	}
 
+	// Get Accept-Language header value
 	i.AcceptLanguage = h.Get("Accept-Language")
+	// Get User-Agent header value
 	i.UserAgent = h.Get("User-Agent")
 	return
 }

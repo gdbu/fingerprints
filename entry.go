@@ -14,8 +14,9 @@ const (
 	ErrEmptyUserAgent = errors.Error("invalid user agent, cannot be empty")
 )
 
-func makeEntry(userID string) (e Entry) {
+func makeEntry(userID string, i Identifiers) (e Entry) {
 	e.UserID = userID
+	e.Identifiers = i
 	return
 }
 

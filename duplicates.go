@@ -47,12 +47,16 @@ func (d *duplicates) compare(signature string) (ok bool, err error) {
 
 func (d *duplicates) iterate(entryID string, val mojura.Value) (err error) {
 	e := val.(*Entry)
+	// Attempt to get stringset for current signature
 	ss, ok := d.m[d.lastSignature]
 	if !ok {
+		// No stringset exists for this signature, initialize a new one
 		ss = stringset.MakeMap()
+		// Associated created stringset with the signature
 		d.m[d.lastSignature] = ss
 	}
 
+	// Set user ID to stringset
 	ss.Set(e.UserID)
 	return
 }

@@ -22,17 +22,21 @@ func asEntry(val mojura.Value) (e *Entry, err error) {
 func appendMatchFilters(in []mojura.Filter, i Identifiers) (out []mojura.Filter) {
 	out = in
 	if len(i.IPAddress) != 0 {
+		// IP address exists, setup an IP filter
 		ipFilter := filters.Match(RelationshipIPAddresses, i.IPAddress)
 		out = append(out, ipFilter)
 	}
 
 	if len(i.UserAgent) != 0 {
+		// User agent exists, setup a User Agent filter
+		// Note: First, we must hash the user agent
 		hashed := NewHash(i.UserAgent).String()
 		uaFilter := filters.Match(RelationshipUserAgents, hashed)
 		out = append(out, uaFilter)
 	}
 
 	if len(i.AcceptLanguage) != 0 {
+		// Accept language exists, setup accept language filter
 		lngFilter := filters.Match(RelationshipAcceptLanguages, i.AcceptLanguage)
 		out = append(out, lngFilter)
 	}

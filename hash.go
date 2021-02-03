@@ -15,6 +15,7 @@ func NewHash(strs ...string) *Hash {
 // MakeHash will generate a new hashed value from an inbound string value
 func MakeHash(strs ...string) (h Hash) {
 	var err error
+	// Initialize new sha256 encoder
 	enc := sha256.New()
 	for _, str := range strs {
 		if _, err = enc.Write([]byte(str)); err != nil {
@@ -28,6 +29,7 @@ func MakeHash(strs ...string) (h Hash) {
 		}
 	}
 
+	// Set the hash bytes as the sum of the hash encoding
 	enc.Sum(h[:0])
 	return
 }

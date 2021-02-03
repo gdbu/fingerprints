@@ -47,35 +47,43 @@ type Controller struct {
 
 // New will insert a new Entry to the back-end
 func (c *Controller) New(ctx context.Context, userID string, i Identifiers) (err error) {
-	e := makeEntry(userID)
-	e.Identifiers = i
+	// Make new entry from provided userID and identifiers
+	e := makeEntry(userID, i)
 
 	// Validate entry
 	if err = e.Validate(); err != nil {
 		return
 	}
 
+	// Set users match as the primary filter
 	fs := []mojura.Filter{filters.Match(RelationshipUsers, userID)}
+	// Append remaining match filters as secondary filters
 	fs = appendMatchFilters(fs, i)
 
 	var exists bool
+	// Open a new read-only transaction
 	if err = c.m.ReadTransaction(ctx, func(txn *mojura.Transaction) (err error) {
+		// Attempt to see if entry exists
 		exists, err = c.entryExists(txn, fs)
 		return
 	}); err != nil {
 		return
 	}
 
+	// Check to see if matching entry for this user already exist
 	if exists {
+		// Exact match entry already exists, bail out
 		return
 	}
 
+	// Open a batched read/write transaction
 	err = c.m.Batch(ctx, func(txn *mojura.Transaction) (err error) {
 		// Now that we've opened a write transaction, ensure the entry still does not exists
 		if exists, err = c.entryExists(txn, fs); exists || err != nil {
 			return
 		}
 
+		// Insert new entry into DB
 		return c.new(txn, &e)
 	})
 
@@ -232,17 +240,22 @@ func (c *Controller) getMatches(txn *mojura.Transaction, lastID string, i Identi
 // New will insert a new Entry to the back-end
 func (c *Controller) entryExists(txn *mojura.Transaction, fs []mojura.Filter) (ok bool, err error) {
 	var cur mojura.Cursor
+	// Initialize a new cursor with the provided filters
 	if cur, err = txn.Cursor(fs...); err != nil {
 		return
 	}
 
+	// Attempt to get the very first matching entry
 	_, err = cur.First()
 	switch err {
 	case nil:
+		// No error encountered, entry exists
 		ok = true
 	case mojura.Break:
+		// Break error encountered, no entry exists
 		err = nil
 	default:
+		// Unexpected error encountered, oof
 	}
 
 	return
