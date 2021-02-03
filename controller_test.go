@@ -132,7 +132,7 @@ func ExampleController_GetByUserAgent() {
 		es  []*Entry
 		err error
 	)
-	if es, err = testController.GetByUserAgent("[IP Address]"); err != nil {
+	if es, err = testController.GetByUserAgent("[User Agent]"); err != nil {
 		log.Fatal(err)
 	}
 
