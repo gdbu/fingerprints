@@ -194,6 +194,7 @@ func ExampleController_GetDuplicates() {
 		dups map[string]stringset.Map
 		err  error
 	)
+
 	if dups, err = testController.GetDuplicates(); err != nil {
 		log.Fatal(err)
 	}
